@@ -1,0 +1,64 @@
+# Bash/zsh shared functions
+rg() {
+   echo "Start search for \"$@\""
+   grep -R "$@"
+}
+
+gitcd() {
+   dir=$1
+   cd $GIT_DIR/${1}
+}
+
+fuzz() {
+   find $1 | fzf
+}
+
+coles_login() {
+   echo "m27L$(stoken)"
+}
+
+login() {
+   if [ "$1" = "stax" ]; then
+      zbarimg -q ~/Desktop/Screen\ Shot\ 2019-07-18\ at\ 3.19.16\ pm.png | sed 's/.*secret=\(.*\)&digits=.*/\1/g' | xargs oathtool --totp=sha1 -b
+   fi
+
+   if [ "$1" = "coles" ]; then
+       echo "m27L$(stoken)"
+   fi
+}
+
+
+GIT_DIR="~/Desktop/git"
+
+# Bash/zsh shared aliases
+#eval $(gdircolors ~/.dircolors/dark)
+
+## General
+alias zrc='vi ~/.zshrc'
+alias brc='vi ~/.bash_profile'
+alias vrc='vi ~/.vimrc'
+alias chal='vi ~/.aliases'
+alias bsauce='source ~/.bash_profile'
+alias zsauce='source ~/.zshrc'
+alias aliases='vi ~/.aliases'
+alias vi='vim'
+alias vis='vim $(fzf)'
+
+alias gbdm='git branch --no-color --merged | command grep -vE "^(\*|\s*(master|develop|dev|test|prod)\s*$)" | command xargs -n 1 git branch -d'
+
+alias allstax='login stax | $GIT_DIR/gomi/working/aws-login/stax.py id.security.flybuys.au1.staxapp.cloud -u "$(cat ~/.email)" login-all > ~/.aws/credentials'
+
+## Using pyenv to change version globally
+#alias python='python3.7'
+
+## Vigil aliases
+alias vigilhealthprod='curl https://api.vigil.ops.versent.com.au/ping'
+alias vigilhealthdev='curl https://api.vigil-dev.ops.versent.com.au/ping'
+alias vigilversionprod='curl https://api.vigil.ops.versent.com.au/v1/version'
+alias vigilversiondev='curl https://api.vigil-dev.ops.versent.com.au/v1/version'
+
+## Git Aliases
+alias gtb='git fetch -p && for branch in $(git branch -vv | grep ": gone]" | awk "{print $1}"); do git branch -D $branch; done'
+alias gitdir='cd $GIT_DIR/'
+alias gitgomi='cd $GIT_DIR/gomi'
+alias gitvigil='cd $GIT_DIR/vigil'

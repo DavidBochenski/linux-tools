@@ -1,8 +1,9 @@
 #Macbook Setup
 
 mkdir homebrew \
-    && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
-brew update
+    && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew \
+    && rm -rf homebrew \
+    && brew update
 
 brew install \
     coreutils \
@@ -42,9 +43,17 @@ $(brew --prefix)/opt/fzf/install
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 # oh-my-zsh plugins
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-sed -i '' 's/^plugins=.*/plugins=(git zsh-autosuggestions)/' ~/.zshrc
-echo "ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=red'" >> ~/.zshrc
-echo "ZSH_AUTOSUGGEST_STRATEGY=(history completion)" >> ~/.zshrc
+sed -i '' 's/^plugins=.*/plugins=(git zsh-autosuggestions gnu-utils)/' ~/.zshrc
+
+cp aliases ~/.aliases
+
+tee -a ~/.zshrc <<EOF
+source ~/.aliases
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=red'
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+EOF
 
 
 # Python versions for VMS debugging
