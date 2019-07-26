@@ -69,7 +69,7 @@ pyenv global 3.7.3
 pip install --upgrade pip
 pip install jmespath requests ruamel.yaml bs4 boto3 botocore awslogs cfn-lint --user
 
-sed -i '' 's#export PATH=#export PATH=/Users/davidbochenski/.local:$(pyenv root)/shims:/usr/local/Cellar:$HOME/bin:/usr/local/bin:$PATH/' ~/.zshrc
+sed -i '' 's#export PATH=#export PATH=$(brew --prefix coreutils)/libexec/gnubin:/Users/davidbochenski/.local:$(pyenv root)/shims:/usr/local/Cellar:$HOME/bin:/usr/local/bin:$PATH/' ~/.zshrc
 
 curl https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_darwin_amd64.zip -o ~/Downloads/packer_1.4.2.zip \
     && unzip ~/Downloads/packer_1.4.2.zip -d ~/.local/bin \
