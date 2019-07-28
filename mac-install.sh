@@ -1,3 +1,8 @@
+#!/bin/bash
+
+set -eu -o pipefail
+set -x
+
 #Macbook Setup
 
 mkdir homebrew \
@@ -57,17 +62,23 @@ EOF
 
 
 # Python versions for VMS debugging
-pyenv install 3.7.3
-pyenv install 3.6.7
-
 # User installs are kept per version
-pyenv global 3.6.7
-pip install --upgrade pip
-pip install jmespath requests ruamel.yaml bs4 boto3 botocore awslogs cfn-lint --user
-
-pyenv global 3.7.3
-pip install --upgrade pip
-pip install jmespath requests ruamel.yaml bs4 boto3 botocore awslogs cfn-lint --user
+for py_version in "3.7.3" "3.6.7"
+do
+    pyenv install $py_version
+    pyenv global $py_version
+    pip install --upgrade pip
+    pip install \
+        jmespath \
+        requests \
+        ruamel.yaml \
+        bs4 \
+        boto3 \
+        botocore \
+        awslogs \
+        cfn-lint \
+        --user
+done
 
 sed -i '' 's#export PATH=#export PATH=$(brew --prefix coreutils)/libexec/gnubin:/Users/davidbochenski/.local:$(pyenv root)/shims:/usr/local/Cellar:$HOME/bin:/usr/local/bin:$PATH/' ~/.zshrc
 
