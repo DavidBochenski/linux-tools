@@ -77,6 +77,7 @@ do
         botocore \
         awslogs \
         cfn-lint \
+        iterm2 \
         --user
 done
 
@@ -95,4 +96,5 @@ bash autogen.sh
 make
 make check
 make install
+cd ../ && rm -rf ./stoken
 #stoken import --file <path to sdtid>
