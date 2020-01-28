@@ -27,6 +27,18 @@ brew install \
     zbar \
     oath-toolkit
 
+brew doctor
+brew update
+# TODO: Needs vituralbox 6.0 - 6.1 incompatible as at 01/01/2020
+# https://download.virtualbox.org/virtualbox/6.0.0/
+#brew cask install virtualbox
+curl https://download.virtualbox.org/virtualbox/6.0.0/VirtualBox-6.0.0-127566-OSX.dmg -o ~/Downloads/VirtualBox-6.0.0-127566-OSX.dmg
+INSTALL_MOUNT=$(hdiutil mount ~/Downloads/VirtualBox-6.0.0-127566-OSX.dmg | tail -1 | awk '{prinf($3)}')
+sudo installer -pkg $INSTALL_MOUNT/VirtualBox.pkg -target ~/Applications/
+brew cask install vagrant
+vagrant plugin install vagrant-vbguest #vboxsf filesystem
+
+
 # For stoken
 brew install \
     autoconf \
@@ -76,8 +88,13 @@ do
         boto3 \
         botocore \
         awslogs \
+        awscli \
         cfn-lint \
         iterm2 \
+        websockets \
+        remarshal \
+        beautifulsoup4 \
+        setuptools \
         --user
 done
 
