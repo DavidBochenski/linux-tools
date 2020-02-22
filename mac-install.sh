@@ -1,9 +1,8 @@
 #!/bin/bash
 
-set -eu -o pipefail
-set -x
+set -eux -o pipefail
 
-#Macbook Setup
+# Macbook Setup
 
 mkdir homebrew \
     && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew \
@@ -32,9 +31,11 @@ brew update
 # TODO: Needs vituralbox 6.0 - 6.1 incompatible as at 01/01/2020
 # https://download.virtualbox.org/virtualbox/6.0.0/
 #brew cask install virtualbox
-curl https://download.virtualbox.org/virtualbox/6.0.0/VirtualBox-6.0.0-127566-OSX.dmg -o ~/Downloads/VirtualBox-6.0.0-127566-OSX.dmg
-INSTALL_MOUNT=$(hdiutil mount ~/Downloads/VirtualBox-6.0.0-127566-OSX.dmg | tail -1 | awk '{prinf($3)}')
-sudo installer -pkg $INSTALL_MOUNT/VirtualBox.pkg -target ~/Applications/
+curl https://download.virtualbox.org/virtualbox/6.0.0/VirtualBox-6.0.0-127566-OSX.dmg -o ~/Downloads/VirtualBox-6.0.0-127566-OSX.dmg \
+    && INSTALL_MOUNT="$(hdiutil mount ~/Downloads/VirtualBox-6.0.0-127566-OSX.dmg | tail -1)" \
+    && sudo installer -pkg "$(echo "$INSTALL_MOUNT" | awk 'print($3)')/VirtualBox.pkg" -target ~/Applications/ \
+    && hdiutil unmount "$(echo "$INSTALL_MOUNT" | awk 'print($1)')" \
+    && rm -f ~/Downloads/VirtualBox-6.0.0-127566-OSX.dmg
 brew cask install vagrant
 vagrant plugin install vagrant-vbguest #vboxsf filesystem
 
@@ -65,11 +66,22 @@ sed -i '' 's/^plugins=.*/plugins=(git zsh-autosuggestions gnu-utils)/' ~/.zshrc
 cp aliases ~/.aliases
 
 tee -a ~/.zshrc <<EOF
+export PATH=$(brew --prefix coreutils)/libexec/gnubin:$HOME/.local/bin:$(pyenv root)/shims:/usr/local/Cellar:/usr/local/bin:$PATH
+
 source ~/.aliases
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=red'
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+eval $(dircolors ~/.dircolors/custom)
+
+zstyle ':completion:*:ssh:*' hosts off
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+source ~/Desktop/git/versent/gomi/working/flybuys/cli/bob
+source ~/Desktop/git/other/fzf-tab-completion/zsh/fzf-zsh-completion.sh
 EOF
 
 
@@ -95,6 +107,7 @@ do
         remarshal \
         beautifulsoup4 \
         setuptools \
+        git+https://github.com/mattgwwalker/msg-extractor \
         --user
 done
 
@@ -115,3 +128,40 @@ make check
 make install
 cd ../ && rm -rf ./stoken
 #stoken import --file <path to sdtid>
+
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin/eksctl
+chmod 775 /usr/local/bin/eksctl
+
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl"
+mv ./kubectl /usr/local/bin/kubectl
+chmod 775 /usr/local/bin/kubectl
+
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+cd /tmp && curl -L https://istio.io/downloadIstio | bash \
+&& chmod 775 ./istio-*/bin/istioctl \
+&& mv ./istio-*/bin/istioctl /usr/local/bin/ \
+&& mv ./istio-*/tools/_istioctl ~/.oh-my-zsh/completions/
+
+# Install Java 7
+# Install Java 7 JCE inside Java 7
+
+# RDP applescript to auto log into
+```
+tell application "Microsoft Remote Desktop"
+    activate
+    tell application "System Events"
+        set frontmost of process "Microsoft Remote Desktop" to true
+        tell process "Microsoft Remote Desktop"
+            keystroke "f" using {command down}
+            keystroke "OPDGW" --search query
+            delay 1
+            keystroke tab
+            delay 1
+            key code 125 -- down
+            key code 36 --enter
+        end tell
+    end tell
+end tell
+```
